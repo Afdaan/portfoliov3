@@ -1,0 +1,265 @@
+/* Project Modal - Unique class names to avoid conflict with ConfirmModal */
+.project-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(17, 17, 27, 0.85);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.project-modal-container {
+  width: 100%;
+  max-width: 900px;
+  max-height: 90vh;
+  background: rgba(30, 30, 46, 0.95) !important;
+  border: 1px solid var(--ctp-mauve);
+  border-radius: var(--radius-lg);
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+}
+
+.project-modal-close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: rgba(30, 30, 46, 0.6);
+  border: 1px solid var(--ctp-surface0);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-secondary);
+  cursor: pointer;
+  z-index: 10;
+  transition: all var(--transition-fast);
+}
+
+.project-modal-close:hover {
+  background: var(--ctp-red);
+  color: #fff;
+  border-color: var(--ctp-red);
+  transform: rotate(90deg);
+}
+
+.project-modal-scroll {
+  overflow-y: auto;
+  max-height: 100%;
+  padding: 2rem;
+}
+
+/* Custom Scrollbar for modal */
+.project-modal-scroll::-webkit-scrollbar {
+  width: 8px;
+}
+
+.project-modal-scroll::-webkit-scrollbar-track {
+  background: rgba(30, 30, 46, 0.5);
+}
+
+.project-modal-scroll::-webkit-scrollbar-thumb {
+  background: var(--ctp-surface1);
+  border-radius: 4px;
+}
+
+.project-modal-header {
+  margin-bottom: 1.5rem;
+}
+
+.project-modal-title-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.project-modal-title-row h2 {
+  font-size: 2rem;
+  color: var(--text-primary);
+  margin: 0;
+  font-weight: 800;
+  background: linear-gradient(135deg, var(--ctp-mauve), var(--ctp-blue));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.project-modal-body {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 2rem;
+}
+
+.project-modal-gallery {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.project-modal-image {
+  width: 100%;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--ctp-surface0);
+  box-shadow: var(--shadow-md);
+}
+
+.project-modal-info {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.project-modal-description h3,
+.project-modal-tech h3 {
+  font-size: 1.1rem;
+  color: var(--ctp-mauve);
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+}
+
+.project-modal-description p {
+  color: var(--text-secondary);
+  line-height: 1.7;
+  font-size: 1rem;
+}
+
+.tech-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.project-modal-actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: auto;
+  padding-top: 1rem;
+}
+
+.project-modal-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  text-decoration: none;
+  transition: all var(--transition-base);
+}
+
+.project-modal-btn.github {
+  background: rgba(30, 30, 46, 0.6);
+  border: 1px solid var(--ctp-surface1);
+  color: var(--text-primary);
+}
+
+.project-modal-btn.github:hover {
+  background: var(--ctp-surface1);
+  transform: translateY(-2px);
+}
+
+.project-modal-btn.demo {
+  background: var(--ctp-mauve);
+  color: var(--ctp-base);
+  border: 1px solid var(--ctp-mauve);
+}
+
+.project-modal-btn.demo:hover {
+  background: var(--ctp-pink);
+  border-color: var(--ctp-pink);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(203, 166, 247, 0.4);
+}
+
+/* Status badge styles */
+.project-status {
+  padding: 0.35rem 0.85rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  border: 1px solid transparent;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-shrink: 0;
+}
+
+.project-status::before {
+  content: '';
+  display: block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.status-completed {
+  background: rgba(166, 227, 161, 0.1);
+  color: var(--ctp-green);
+  border-color: rgba(166, 227, 161, 0.2);
+}
+.status-completed::before { background: var(--ctp-green); box-shadow: 0 0 8px rgba(166, 227, 161, 0.6); }
+
+.status-in-progress {
+  background: rgba(249, 226, 175, 0.1);
+  color: var(--ctp-yellow);
+  border-color: rgba(249, 226, 175, 0.2);
+}
+.status-in-progress::before { background: var(--ctp-yellow); box-shadow: 0 0 8px rgba(249, 226, 175, 0.6); }
+
+.status-planning {
+  background: rgba(137, 180, 250, 0.1);
+  color: var(--ctp-blue);
+  border-color: rgba(137, 180, 250, 0.2);
+}
+.status-planning::before { background: var(--ctp-blue); box-shadow: 0 0 8px rgba(137, 180, 250, 0.6); }
+
+.status-default {
+  background: var(--ctp-surface0);
+  color: var(--text-secondary);
+}
+.status-default::before { background: var(--text-secondary); }
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+  .project-modal-container {
+    height: 100vh;
+    max-height: 100vh;
+    border-radius: 0;
+    width: 100%;
+  }
+
+  .project-modal-body {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .project-modal-scroll {
+    padding: 1.5rem;
+    padding-top: 3.5rem;
+  }
+
+  .project-modal-title-row h2 {
+    font-size: 1.75rem;
+  }
+  
+  .project-modal-actions {
+    flex-direction: column;
+  }
+  
+  .project-modal-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
