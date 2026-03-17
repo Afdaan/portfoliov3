@@ -20,8 +20,8 @@ export default function ExperienceManager() {
     start_date: '',
     end_date: '',
     description: '',
-    responsibilities: [],
-    technologies: [],
+    responsibilities: '',
+    technologies: '',
     order_index: 0
   }
 
@@ -53,7 +53,9 @@ export default function ExperienceManager() {
       // Convert empty end_date to null for current positions
       const workData = {
         ...work,
-        end_date: work.end_date || null
+        end_date: work.end_date || null,
+        responsibilities: typeof work.responsibilities === 'string' ? work.responsibilities.split('\n').map(r => r.trim()).filter(Boolean) : work.responsibilities,
+        technologies: typeof work.technologies === 'string' ? work.technologies.split(',').map(t => t.trim()).filter(Boolean) : work.technologies
       }
       
       const { error } = await supabase
@@ -177,8 +179,8 @@ export default function ExperienceManager() {
             <div className="form-group">
               <label>Responsibilities (one per line)</label>
               <textarea 
-                value={Array.isArray(editingWork.responsibilities) ? editingWork.responsibilities.join('\n') : ''} 
-                onChange={(e) => setEditingWork({ ...editingWork, responsibilities: e.target.value.split('\n').filter(r => r.trim()) })} 
+                value={editingWork.responsibilities || ''} 
+                onChange={(e) => setEditingWork({ ...editingWork, responsibilities: e.target.value })} 
                 rows="5"
                 placeholder="Deployed and configured Linux server environments&#10;Utilized KVM for creating and managing virtual machines&#10;Configured web hosting environments for client websites"
               />
@@ -187,8 +189,8 @@ export default function ExperienceManager() {
               <label>Technologies Used (comma-separated)</label>
               <input 
                 type="text" 
-                value={Array.isArray(editingWork.technologies) ? editingWork.technologies.join(', ') : ''} 
-                onChange={(e) => setEditingWork({ ...editingWork, technologies: e.target.value.split(',').map(t => t.trim()).filter(t => t) })} 
+                value={editingWork.technologies || ''} 
+                onChange={(e) => setEditingWork({ ...editingWork, technologies: e.target.value })} 
                 placeholder="Linux, KVM, cPanel, Email Hosting, Web Hosting"
               />
             </div>
@@ -216,7 +218,11 @@ export default function ExperienceManager() {
                 <td>{work.start_date} - {work.end_date || 'Present'}</td>
                 <td className="admin-actions">
                   <button className="btn btn-secondary" onClick={() => { 
-                    setEditingWork(work); 
+                    setEditingWork({
+                      ...work,
+                      responsibilities: Array.isArray(work.responsibilities) ? work.responsibilities.join('\n') : work.responsibilities,
+                      technologies: Array.isArray(work.technologies) ? work.technologies.join(', ') : work.technologies
+                    }); 
                     setShowWorkForm(true);
                     // Small timeout to allow form to render
                     setTimeout(() => document.querySelector('.admin-form')?.scrollIntoView({ behavior: 'smooth' }), 100);
