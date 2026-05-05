@@ -6,7 +6,8 @@ import * as FaIcons from 'react-icons/fa'
 import * as VscIcons from 'react-icons/vsc'
 import * as DiIcons from 'react-icons/di'
 import * as BsIcons from 'react-icons/bs'
-import './TechStack.css'
+import { Loader2 } from 'lucide-react'
+import { Card, CardContent } from '@/components/ui/card'
 
 export default function TechStack() {
   const [techStack, setTechStack] = useState([])
@@ -43,94 +44,88 @@ export default function TechStack() {
 
   const getIcon = (iconName) => {
     if (!iconName) return null
-    // Check all icon libraries
     const Icon = SiIcons[iconName] || FaIcons[iconName] || VscIcons[iconName] || DiIcons[iconName] || BsIcons[iconName]
-    return Icon ? <Icon /> : null
+    return Icon ? <Icon className="w-6 h-6 md:w-7 md:h-7" /> : null
   }
   
   const renderIcon = (input) => {
-    if (!input) return <span>⚡</span>
+    if (!input) return <span className="text-xl">⚡</span>
     
-    // Try to get react icon first
     const iconComponent = getIcon(input)
     if (iconComponent) return iconComponent
     
-    // If no icon found and it looks like a URL, render image
     if (input.includes('/') || input.includes('.')) {
-      return <img src={input} alt="Tech" />
+      return <img src={input} alt="Tech" className="w-6 h-6 md:w-7 md:h-7 object-contain" />
     }
     
-    // Fallback
-    return <span>⚡</span>
+    return <span className="text-xl">⚡</span>
   }
 
   if (loading) {
     return (
-      <section id="skills" className="section">
-        <div className="container">
-          <div className="spinner"></div>
-        </div>
+      <section id="skills" className="min-h-screen py-24 flex items-center justify-center bg-background">
+        <Loader2 className="w-10 h-10 animate-spin text-primary" />
       </section>
     )
   }
 
   const groupedTech = groupByCategory(techStack)
-
-  // Define custom order for categories
   const categoryOrder = ['Programming Languages', 'Frontend', 'Backend', 'Databases', 'DevOps', 'Tools', 'Cloud', 'Others']
   
-  // Sort categories based on predefined order
   const sortedCategories = Object.entries(groupedTech).sort((a, b) => {
     const indexA = categoryOrder.indexOf(a[0])
     const indexB = categoryOrder.indexOf(b[0])
     
-    // If both categories are in the list, sort by index
     if (indexA !== -1 && indexB !== -1) return indexA - indexB
-    
-    // If one is in the list, prioritize it
     if (indexA !== -1) return -1
     if (indexB !== -1) return 1
     
-    // If neither is in the list, sort alphabetically
     return a[0].localeCompare(b[0])
   })
 
   return (
-    <section id="skills" className="section">
-      <div className="container">
-        <h2 className="section-title">Skills & Technologies</h2>
+    <section id="skills" className="py-24 bg-background relative border-t border-border/50">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center mb-16">
+          <h2 className="text-3xl md:text-5xl font-bold mb-4 tracking-tight">Skills & Technologies</h2>
+          <p className="text-muted-foreground max-w-2xl mx-auto">
+            A comprehensive list of tools and technologies I use to bring ideas to life.
+          </p>
+          <div className="w-20 h-1 bg-gradient-to-r from-primary to-accent mx-auto rounded-full mt-6"></div>
+        </div>
 
-        {sortedCategories.map(([category, techs], catIndex) => (
-          <div key={category} className="tech-category">
-            <h3 className="category-title">{category}</h3>
-            <div className="tech-grid grid grid-4">
-              {techs.map((tech, index) => (
-                <motion.div
-                  key={tech.id}
-                  className="tech-card glass-card"
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.3, delay: index * 0.05 }}
-                  whileHover={{ scale: 1.05, y: -5 }}
-                >
-                  <div className="tech-icon">
-                    {renderIcon(tech.icon_url)}
-                  </div>
-                  <div className="tech-name">{tech.name}</div>
-                  {tech.proficiency && (
-                    <div className="proficiency-bar">
-                      <div 
-                        className="proficiency-fill" 
-                        style={{ width: `${(tech.proficiency / 5) * 100}%` }}
-                      ></div>
-                    </div>
-                  )}
-                </motion.div>
-              ))}
+        <div className="max-w-6xl mx-auto space-y-16">
+          {sortedCategories.map(([category, techs]) => (
+            <div key={category} className="space-y-8">
+              <div className="flex items-center gap-4">
+                <h3 className="text-xl md:text-2xl font-bold text-foreground whitespace-nowrap">{category}</h3>
+                <div className="h-px bg-border/50 w-full"></div>
+              </div>
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                {techs.map((tech, index) => (
+                  <motion.div
+                    key={tech.id}
+                    initial={{ opacity: 0, y: 10 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.3, delay: index * 0.03 }}
+                  >
+                    <Card className="border-border bg-card shadow-none hover:border-primary/50 transition-all duration-300 group cursor-default rounded-2xl">
+                      <CardContent className="p-3 flex items-center gap-3">
+                        <div className="text-primary transition-colors duration-300 shrink-0">
+                          {renderIcon(tech.icon_url)}
+                        </div>
+                        <span className="font-medium text-sm text-foreground transition-colors">
+                          {tech.name}
+                        </span>
+                      </CardContent>
+                    </Card>
+                  </motion.div>
+                ))}
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
     </section>
   )

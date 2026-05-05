@@ -1,16 +1,16 @@
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { supabase } from '../lib/supabaseClient'
-import { FaBriefcase, FaRocket, FaBolt, FaBuilding } from 'react-icons/fa'
-import './About.css'
+import { Briefcase, Rocket, Zap, Building2, Loader2 } from 'lucide-react'
+import { Card, CardContent } from '@/components/ui/card'
 
 export default function About() {
   const [profile, setProfile] = useState(null)
   const [stats, setStats] = useState([
-    { label: 'Years Experience', value: '0+', icon: <FaBriefcase /> },
-    { label: 'Projects Completed', value: '0+', icon: <FaRocket /> },
-    { label: 'Technologies', value: '0+', icon: <FaBolt /> },
-    { label: 'Companies', value: '0+', icon: <FaBuilding /> }
+    { label: 'Years Experience', value: '0+', icon: <Briefcase className="w-6 h-6" /> },
+    { label: 'Projects Completed', value: '0+', icon: <Rocket className="w-6 h-6" /> },
+    { label: 'Technologies', value: '0+', icon: <Zap className="w-6 h-6" /> },
+    { label: 'Companies', value: '0+', icon: <Building2 className="w-6 h-6" /> }
   ])
   const [loading, setLoading] = useState(true)
 
@@ -20,7 +20,6 @@ export default function About() {
 
   async function fetchData() {
     try {
-      // Fetch profile, work experiences, projects, and tech stack
       const [profileRes, workRes, projectsRes, techRes] = await Promise.all([
         supabase.from('profiles').select('*').single(),
         supabase.from('work_experiences').select('start_date, end_date, company'),
@@ -30,7 +29,6 @@ export default function About() {
       
       if (profileRes.data) setProfile(profileRes.data)
       
-      // Calculate years of experience
       let totalMonths = 0
       if (workRes.data && workRes.data.length > 0) {
         workRes.data.forEach(exp => {
@@ -42,19 +40,15 @@ export default function About() {
       }
       const years = Math.floor(totalMonths / 12)
       
-      // Count unique companies
       const uniqueCompanies = workRes.data ? new Set(workRes.data.map(exp => exp.company)).size : 0
-      
-      // Count projects and technologies
       const projectsCount = projectsRes.data?.length || 0
       const techCount = techRes.data?.length || 0
       
-      // Update stats
       setStats([
-        { label: 'Years Experience', value: `${years+1}+`, icon: <FaBriefcase /> },
-        { label: 'Projects Completed', value: `${projectsCount}+`, icon: <FaRocket /> },
-        { label: 'Technologies', value: `${techCount}+`, icon: <FaBolt /> },
-        { label: 'Companies', value: `${uniqueCompanies}+`, icon: <FaBuilding /> }
+        { label: 'Years Experience', value: `${years+1}+`, icon: <Briefcase className="w-6 h-6" /> },
+        { label: 'Projects Completed', value: `${projectsCount}+`, icon: <Rocket className="w-6 h-6" /> },
+        { label: 'Technologies', value: `${techCount}+`, icon: <Zap className="w-6 h-6" /> },
+        { label: 'Companies', value: `${uniqueCompanies}+`, icon: <Building2 className="w-6 h-6" /> }
       ])
     } catch (error) {
       console.error('Error fetching data:', error)
@@ -63,125 +57,67 @@ export default function About() {
     }
   }
 
-  const attributes = [
-    { title: 'Problem Solving', description: 'Analytical approach to complex challenges' },
-    { title: 'Team Leadership', description: 'Collaborative and mentoring mindset' },
-    { title: 'Fast Learner', description: 'Quick adaptation to new technologies' },
-    { title: 'Detail-Oriented', description: 'Attention to code quality and best practices' }
-  ]
-
-  // Animated counter component
-  const AnimatedCounter = ({ value, duration = 2000 }) => {
-    const [count, setCount] = useState(0)
-    const [hasAnimated, setHasAnimated] = useState(false)
-    
-    useEffect(() => {
-      if (!hasAnimated) return
-      
-      const numericValue = parseInt(value.replace(/\D/g, ''))
-      const increment = numericValue / (duration / 16)
-      let current = 0
-      
-      const timer = setInterval(() => {
-        current += increment
-        if (current >= numericValue) {
-          setCount(numericValue)
-          clearInterval(timer)
-        } else {
-          setCount(Math.floor(current))
-        }
-      }, 16)
-      
-      return () => clearInterval(timer)
-    }, [hasAnimated, value, duration])
-    
-    return (
-      <motion.div
-        className="stat-value"
-        initial={{ scale: 0.5, opacity: 0 }}
-        whileInView={{ scale: 1, opacity: 1 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.5 }}
-        onViewportEnter={() => setHasAnimated(true)}
-      >
-        {count}+
-      </motion.div>
-    )
-  }
-
   if (loading) {
     return (
-      <section id="about" className="section">
-        <div className="container">
-          <div className="spinner"></div>
-        </div>
+      <section id="about" className="min-h-screen py-24 flex items-center justify-center bg-background">
+        <Loader2 className="w-10 h-10 animate-spin text-primary" />
       </section>
     )
   }
 
   return (
-    <section id="about" className="section">
-      <div className="container">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-        >
-          <h2 className="section-title">About Me</h2>
-          
-          <div className="about-content">
-            <p className="about-description">
-              {profile?.description || "Passionate Full Stack Developer and DevOps Engineer with expertise in building scalable web applications and automating infrastructure. I love creating efficient solutions and learning new technologies."}
-            </p>
-          </div>
-
-          <div className="stats-grid grid grid-4">
-            {stats.map((stat, index) => (
-              <motion.div
-                key={index}
-                className="stat-card glass-card"
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                whileHover={{ 
-                  scale: 1.05,
-                  boxShadow: "0 20px 40px rgba(203, 166, 247, 0.3)"
-                }}
-              >
-                <div className="stat-icon">
-                  {stat.icon}
-                </div>
-                <AnimatedCounter value={stat.value} />
-                <div className="stat-label">{stat.label}</div>
-              </motion.div>
-            ))}
-          </div>
-
-          <div className="attributes-section">
-            <h3>What I Bring to the Table</h3>
-            <div className="attributes-grid grid grid-2">
-              {attributes.map((attr, index) => (
+    <section id="about" className="py-24 bg-background border-t border-border/50">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-4xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+          >
+            <div className="flex items-center gap-3 mb-12">
+              <Briefcase className="w-6 h-6 text-primary" />
+              <h2 className="text-3xl font-bold tracking-tight">About Me</h2>
+            </div>
+            
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-16">
+              {stats.map((stat, index) => (
                 <motion.div
                   key={index}
-                  className="attribute-card glass-card"
-                  initial={{ opacity: 0, x: -20 }}
-                  whileInView={{ opacity: 1, x: 0 }}
+                  initial={{ opacity: 0, y: 10 }}
+                  whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
-                  transition={{ duration: 0.5, delay: index * 0.1 }}
-                  whileHover={{ 
-                    x: 10,
-                    boxShadow: "0 10px 30px rgba(137, 180, 250, 0.3)"
-                  }}
+                  transition={{ duration: 0.4, delay: index * 0.1 }}
                 >
-                  <h4>{attr.title}</h4>
-                  <p>{attr.description}</p>
+                  <Card className="border-border bg-card shadow-none text-center">
+                    <CardContent className="p-4 flex flex-col items-center">
+                      <div className="mb-2 text-primary opacity-80">{stat.icon}</div>
+                      <div className="text-xl font-bold text-foreground">{stat.value}</div>
+                      <div className="text-[10px] uppercase tracking-wider font-bold text-muted-foreground">{stat.label}</div>
+                    </CardContent>
+                  </Card>
                 </motion.div>
               ))}
             </div>
-          </div>
-        </motion.div>
+
+            <div className="space-y-6 text-muted-foreground leading-relaxed">
+              <p>
+                I am a passionate <span className="text-foreground font-medium">Full Stack Developer</span> and 
+                <span className="text-foreground font-medium"> DevOps Engineer</span> based in Jakarta, Indonesia. 
+                My journey in software development began with a curiosity for building things that live on the internet.
+              </p>
+              <p>
+                With a background in both development and operations, I specialize in creating robust, scalable applications 
+                while ensuring seamless deployment and infrastructure management. I love solving complex problems 
+                and optimizing performance across the entire stack.
+              </p>
+              <p>
+                When I'm not coding, you can find me exploring new technologies, contributing to open-source projects, 
+                or sharing my knowledge with the developer community.
+              </p>
+            </div>
+          </motion.div>
+        </div>
       </div>
     </section>
   )

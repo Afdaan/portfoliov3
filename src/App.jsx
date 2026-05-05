@@ -1,5 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import { Toaster } from 'react-hot-toast'
+import { ThemeProvider } from './components/ThemeProvider'
 import Home from './pages/Home'
 import AdminLogin from './admin/AdminLogin'
 import AdminDashboard from './admin/AdminDashboard'
@@ -7,42 +8,44 @@ import ProtectedRoute from './components/ProtectedRoute'
 
 function App() {
   return (
-    <Router>
-      <Toaster 
-        position="top-right"
-        toastOptions={{
-          style: {
-            background: '#313244',
-            color: '#cdd6f4',
-            border: '1px solid #45475a',
-          },
-          success: {
-            iconTheme: {
-              primary: '#a6e3a1',
-              secondary: '#1e1e2e',
+    <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+      <Router>
+        <Toaster 
+          position="top-right"
+          toastOptions={{
+            style: {
+              background: 'hsl(var(--card))',
+              color: 'hsl(var(--foreground))',
+              border: '1px solid hsl(var(--border))',
             },
-          },
-          error: {
-            iconTheme: {
-              primary: '#f38ba8',
-              secondary: '#1e1e2e',
+            success: {
+              iconTheme: {
+                primary: 'hsl(var(--primary))',
+                secondary: 'hsl(var(--background))',
+              },
             },
-          },
-        }}
-      />
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/admin/login" element={<AdminLogin />} />
-        <Route 
-          path="/admin/*" 
-          element={
-            <ProtectedRoute>
-              <AdminDashboard />
-            </ProtectedRoute>
-          } 
+            error: {
+              iconTheme: {
+                primary: 'hsl(var(--destructive))',
+                secondary: 'hsl(var(--background))',
+              },
+            },
+          }}
         />
-      </Routes>
-    </Router>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/admin/login" element={<AdminLogin />} />
+          <Route 
+            path="/admin/*" 
+            element={
+              <ProtectedRoute>
+                <AdminDashboard />
+              </ProtectedRoute>
+            } 
+          />
+        </Routes>
+      </Router>
+    </ThemeProvider>
   )
 }
 

@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { supabase } from '../lib/supabaseClient'
+import { Loader2, Rocket } from 'lucide-react'
 import { FaGithub, FaExternalLinkAlt } from 'react-icons/fa'
+import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 import ProjectModal from './ProjectModal.jsx'
-import './Projects.css'
 
 export default function Projects() {
   const [projects, setProjects] = useState([])
@@ -30,103 +33,106 @@ export default function Projects() {
     }
   }
 
-  const getStatusClass = (status) => {
-    const normalizedStatus = status ? status.toLowerCase() : 'completed'
-    switch (normalizedStatus) {
-      case 'completed':
-      case 'complete':
-        return 'status-completed'
-      case 'in progress':
-      case 'ongoing':
-        return 'status-in-progress'
-      case 'planning':
-      case 'planned':
-        return 'status-planning'
-      default:
-        return 'status-default'
-    }
-  }
-
   if (loading) {
     return (
-      <section id="projects" className="section">
-        <div className="container">
-          <div className="spinner"></div>
-        </div>
+      <section id="projects" className="min-h-screen py-24 flex items-center justify-center bg-background">
+        <Loader2 className="w-10 h-10 animate-spin text-primary" />
       </section>
     )
   }
 
   return (
-    <section id="projects" className="section">
-      <div className="container">
-        <h2 className="section-title">Featured Projects</h2>
+    <section id="projects" className="py-24 bg-background border-t border-border">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-6xl mx-auto">
+          <div className="flex items-center gap-3 mb-12">
+            <Rocket className="w-6 h-6 text-primary" />
+            <h2 className="text-3xl font-bold tracking-tight">Projects</h2>
+          </div>
 
-        <div className="projects-grid grid grid-2">
-          {projects.map((project, index) => (
-            <motion.div
-              key={project.id}
-              className="project-card glass-card"
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: index * 0.1 }}
-              onClick={() => setSelectedProject(project)}
-            >
-              {project.image_urls && project.image_urls.length > 0 && (
-                <div className="project-image">
-                  <img src={project.image_urls[0]} alt={project.title} loading="lazy" />
-                  {project.featured && <div className="featured-badge">⭐ Featured</div>}
-                </div>
-              )}
-              
-              <div className="project-content">
-                <div className="project-header">
-                  <h3>{project.title}</h3>
-                  <span 
-                    className={`project-status ${getStatusClass(project.status)}`}
-                  >
-                    {project.status || 'Completed'}
-                  </span>
-                </div>
-
-                <p className="project-description">{project.description}</p>
-
-                {project.tech_stack && project.tech_stack.length > 0 && (
-                  <div className="project-tech">
-                    {project.tech_stack.map((tech, i) => (
-                      <span key={i} className="tech-badge">{tech}</span>
-                    ))}
-                  </div>
-                )}
-
-                <div className="project-links">
-                  {project.github_url && (
-                    <a 
-                      href={project.github_url} 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className="project-link"
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      <FaGithub /> Code
-                    </a>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {projects.map((project, index) => (
+              <motion.div
+                key={project.id}
+                initial={{ opacity: 0, y: 10 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.4, delay: index * 0.1 }}
+                className="h-full"
+              >
+                <Card 
+                  className="h-full flex flex-col border-border bg-card shadow-none hover:border-primary/50 transition-all duration-300 rounded-[2rem] overflow-hidden cursor-pointer group"
+                  onClick={() => setSelectedProject(project)}
+                >
+                  {project.image_urls && project.image_urls.length > 0 && (
+                    <div className="relative aspect-video overflow-hidden border-b border-border">
+                      <img 
+                        src={project.image_urls[0]} 
+                        alt={project.title} 
+                        loading="lazy" 
+                        className="w-full h-full object-cover transition-all duration-500 group-hover:scale-105"
+                      />
+                      {project.featured && (
+                        <Badge className="absolute top-2 right-2 bg-primary text-primary-foreground text-[10px] py-0 px-2 rounded-sm border-none">
+                          Featured
+                        </Badge>
+                      )}
+                    </div>
                   )}
-                  {project.demo_url && (
-                    <a 
-                      href={project.demo_url} 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className="project-link"
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      <FaExternalLinkAlt /> Live Demo
-                    </a>
-                  )}
-                </div>
-              </div>
-            </motion.div>
-          ))}
+                  
+                  <CardHeader className="p-5 pb-2">
+                    <div className="flex items-start justify-between gap-2 mb-1">
+                      <h3 className="text-lg font-bold group-hover:text-primary transition-colors">{project.title}</h3>
+                    </div>
+                    <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">
+                      {project.description}
+                    </p>
+                  </CardHeader>
+
+                  <CardContent className="p-5 pt-0 flex-1">
+                    {project.tech_stack && project.tech_stack.length > 0 && (
+                      <div className="flex flex-wrap gap-1.5 mt-2">
+                        {project.tech_stack.slice(0, 3).map((tech, i) => (
+                          <Badge key={i} variant="outline" className="text-[10px] py-0 px-2 rounded-sm border-border text-muted-foreground">
+                            {tech}
+                          </Badge>
+                        ))}
+                      </div>
+                    )}
+                  </CardContent>
+
+                  <CardFooter className="p-5 pt-4 border-t border-border/50 flex gap-3">
+                    {project.github_url && (
+                      <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        className="h-8 text-[10px] font-bold uppercase tracking-wider"
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          window.open(project.github_url, '_blank')
+                        }}
+                      >
+                        <FaGithub className="w-3.5 h-3.5 mr-2" /> Code
+                      </Button>
+                    )}
+                    {project.demo_url && (
+                      <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        className="h-8 text-[10px] font-bold uppercase tracking-wider text-primary hover:text-primary hover:bg-primary/5"
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          window.open(project.demo_url, '_blank')
+                        }}
+                      >
+                        <FaExternalLinkAlt className="w-3.5 h-3.5 mr-2" /> Live
+                      </Button>
+                    )}
+                  </CardFooter>
+                </Card>
+              </motion.div>
+            ))}
+          </div>
         </div>
       </div>
 

@@ -1,114 +1,92 @@
-import React, { useEffect } from 'react'
-import { motion } from 'framer-motion'
-import { FaGithub, FaExternalLinkAlt, FaTimes } from 'react-icons/fa'
-import './ProjectModal.css'
+import React from 'react'
+import { FaGithub, FaExternalLinkAlt } from 'react-icons/fa'
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from '@/components/ui/dialog'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 
-const getStatusClass = (status) => {
+const getStatusVariant = (status) => {
   const s = status?.toLowerCase() || 'completed'
-  if (s === 'completed' || s === 'complete') return 'status-completed'
-  if (s === 'in progress' || s === 'ongoing') return 'status-in-progress'
-  if (s === 'planning' || s === 'planned') return 'status-planning'
-  return 'status-default'
+  if (s === 'completed' || s === 'complete') return 'default'
+  if (s === 'in progress' || s === 'ongoing') return 'secondary'
+  if (s === 'planning' || s === 'planned') return 'outline'
+  return 'outline'
 }
 
 export default function ProjectModal({ project, onClose }) {
-  // Prevent body scroll when modal is open
-  useEffect(() => {
-    if (typeof document !== 'undefined') {
-      const originalOverflow = document.body.style.overflow
-      document.body.style.overflow = 'hidden'
-      return () => {
-        document.body.style.overflow = originalOverflow || 'unset'
-      }
-    }
-  }, [])
-
-  // Close on Escape key
-  useEffect(() => {
-    const handleEscape = (e) => {
-      if (e.key === 'Escape') onClose()
-    }
-    window.addEventListener('keydown', handleEscape)
-    return () => window.removeEventListener('keydown', handleEscape)
-  }, [onClose])
-
   if (!project) return null
 
-  const statusClass = getStatusClass(project.status)
-
   return (
-    <motion.div 
-      className="project-modal-overlay"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      onClick={onClose}
-    >
-      <motion.div 
-        className="project-modal-container glass-card"
-        initial={{ scale: 0.9, opacity: 0, y: 20 }}
-        animate={{ scale: 1, opacity: 1, y: 0 }}
-        exit={{ scale: 0.9, opacity: 0, y: 20 }}
-        onClick={(e) => e.stopPropagation()}
-      >
-        <button className="project-modal-close" onClick={onClose} aria-label="Close modal">
-          <FaTimes />
-        </button>
-
-        <div className="project-modal-scroll">
-          <div className="project-modal-header">
-            <div className="project-modal-title-row">
-              <h2>{project.title}</h2>
-              <span className={`project-status ${statusClass}`}>
-                {project.status || 'Completed'}
-              </span>
-            </div>
+    <Dialog open={!!project} onOpenChange={(open) => !open && onClose()}>
+      <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto bg-card border-border/50 shadow-2xl p-0 gap-0">
+        <DialogHeader className="p-6 pb-0">
+          <div className="flex items-start justify-between gap-4 mb-2">
+            <DialogTitle className="text-2xl md:text-3xl font-bold">{project.title}</DialogTitle>
+            <Badge variant={getStatusVariant(project.status)} className="whitespace-nowrap mt-1">
+              {project.status || 'Completed'}
+            </Badge>
           </div>
+          <DialogDescription className="sr-only">
+            Details for project {project.title}
+          </DialogDescription>
+        </DialogHeader>
 
-          <div className="project-modal-body">
-            {project.image_urls && project.image_urls.length > 0 && (
-              <div className="project-modal-gallery">
-                <img 
-                  src={project.image_urls[0]} 
-                  alt={project.title} 
-                  className="project-modal-image"
-                />
+        <div className="p-6 pt-4 space-y-8">
+          {project.image_urls && project.image_urls.length > 0 && (
+            <div className="rounded-xl overflow-hidden border border-border/50">
+              <img 
+                src={project.image_urls[0]} 
+                alt={project.title} 
+                className="w-full h-auto object-cover max-h-[400px]"
+              />
+            </div>
+          )}
+
+          <div className="space-y-6">
+            <div>
+              <h3 className="text-xl font-bold mb-3 border-b border-border/50 pb-2">About Project</h3>
+              <p className="text-muted-foreground leading-relaxed whitespace-pre-wrap">
+                {project.description}
+              </p>
+            </div>
+
+            {project.tech_stack && project.tech_stack.length > 0 && (
+              <div>
+                <h3 className="text-xl font-bold mb-3 border-b border-border/50 pb-2">Tech Stack</h3>
+                <div className="flex flex-wrap gap-2">
+                  {project.tech_stack.map((tech, i) => (
+                    <Badge key={i} variant="secondary" className="bg-secondary/50 hover:bg-secondary text-sm px-3 py-1">
+                      {tech}
+                    </Badge>
+                  ))}
+                </div>
               </div>
             )}
 
-            <div className="project-modal-info">
-              <div className="project-modal-description">
-                <h3>About Project</h3>
-                <p>{project.description}</p>
-              </div>
-
-              {project.tech_stack && project.tech_stack.length > 0 && (
-                <div className="project-modal-tech">
-                  <h3>Tech Stack</h3>
-                  <div className="tech-tags">
-                    {project.tech_stack.map((tech, i) => (
-                      <span key={i} className="tech-badge">{tech}</span>
-                    ))}
-                  </div>
-                </div>
+            <div className="flex flex-wrap gap-4 pt-4 border-t border-border/50">
+              {project.github_url && (
+                <Button asChild variant="outline" className="flex-1 sm:flex-none">
+                  <a href={project.github_url} target="_blank" rel="noopener noreferrer">
+                    <FaGithub className="w-4 h-4 mr-2" /> View Code
+                  </a>
+                </Button>
               )}
-
-              <div className="project-modal-actions">
-                {project.github_url && (
-                  <a href={project.github_url} target="_blank" rel="noopener noreferrer" className="project-modal-btn github">
-                    <FaGithub /> View Code
+              {project.demo_url && (
+                <Button asChild className="flex-1 sm:flex-none">
+                  <a href={project.demo_url} target="_blank" rel="noopener noreferrer">
+                    <FaExternalLinkAlt className="w-4 h-4 mr-2" /> Live Demo
                   </a>
-                )}
-                {project.demo_url && (
-                  <a href={project.demo_url} target="_blank" rel="noopener noreferrer" className="project-modal-btn demo">
-                    <FaExternalLinkAlt /> Live Demo
-                  </a>
-                )}
-              </div>
+                </Button>
+              )}
             </div>
           </div>
         </div>
-      </motion.div>
-    </motion.div>
+      </DialogContent>
+    </Dialog>
   )
 }
