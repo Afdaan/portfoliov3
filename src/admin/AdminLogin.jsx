@@ -2,6 +2,9 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabaseClient'
 import toast from 'react-hot-toast'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 import './AdminLogin.css'
 
 export default function AdminLogin() {
@@ -32,15 +35,17 @@ export default function AdminLogin() {
   }
 
   return (
-    <div className="admin-login-page">
-      <div className="login-container glass-card">
-        <h1>Admin Login</h1>
-        <p className="login-subtitle">Portfolio Management System</p>
+    <div className="admin-login-page bg-background flex items-center justify-center min-h-screen">
+      <div className="login-container glass-card p-8 border border-border bg-card rounded-xl shadow-lg w-full max-w-md space-y-6">
+        <div className="text-center space-y-1">
+          <h1 className="text-2xl font-bold tracking-tight text-foreground">Admin Login</h1>
+          <p className="login-subtitle text-sm text-muted-foreground">Portfolio Management System</p>
+        </div>
 
-        <form onSubmit={handleLogin} className="login-form">
-          <div className="form-group">
-            <label htmlFor="email">Email</label>
-            <input
+        <form onSubmit={handleLogin} className="login-form space-y-4">
+          <div className="form-group space-y-2">
+            <Label htmlFor="email">Email</Label>
+            <Input
               type="email"
               id="email"
               value={email}
@@ -50,9 +55,9 @@ export default function AdminLogin() {
             />
           </div>
 
-          <div className="form-group">
-            <label htmlFor="password">Password</label>
-            <input
+          <div className="form-group space-y-2">
+            <Label htmlFor="password">Password</Label>
+            <Input
               type="password"
               id="password"
               value={password}
@@ -62,12 +67,12 @@ export default function AdminLogin() {
             />
           </div>
 
-          <button type="submit" className="btn btn-primary" disabled={loading}>
+          <Button type="submit" className="w-full" disabled={loading}>
             {loading ? 'Logging in...' : 'Login'}
-          </button>
+          </Button>
         </form>
 
-        <a href="/" className="back-link">← Back to Portfolio</a>
+        <a href="/" className="back-link block text-center text-sm hover:underline text-primary transition-colors">← Back to Portfolio</a>
       </div>
     </div>
   )

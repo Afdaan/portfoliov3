@@ -1,6 +1,10 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../lib/supabaseClient'
 import toast from 'react-hot-toast'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Textarea } from '@/components/ui/textarea'
+import { Label } from '@/components/ui/label'
 
 export default function ProfileEditor() {
   const [profile, setProfile] = useState({
@@ -62,24 +66,26 @@ export default function ProfileEditor() {
     }
   }
 
-  if (loading) return <div className="spinner"></div>
+  if (loading) return <div className="flex justify-center items-center py-12"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div></div>
 
   return (
-    <div className="admin-section">
-      <h3>Edit Profile</h3>
-      <form onSubmit={handleSubmit} className="admin-form">
-        <div className="form-group">
-          <label>Name</label>
-          <input
+    <div className="admin-section space-y-6">
+      <h3 className="text-xl font-bold tracking-tight text-foreground">Edit Profile</h3>
+      <form onSubmit={handleSubmit} className="admin-form space-y-5">
+        <div className="form-group space-y-2">
+          <Label htmlFor="name">Name</Label>
+          <Input
+            id="name"
             type="text"
             value={profile.name || ''}
             onChange={(e) => setProfile({ ...profile, name: e.target.value })}
           />
         </div>
 
-        <div className="form-group">
-          <label>Role</label>
-          <input
+        <div className="form-group space-y-2">
+          <Label htmlFor="role">Role</Label>
+          <Input
+            id="role"
             type="text"
             value={profile.role || ''}
             onChange={(e) => setProfile({ ...profile, role: e.target.value })}
@@ -87,19 +93,21 @@ export default function ProfileEditor() {
           />
         </div>
 
-        <div className="form-row">
-          <div className="form-group">
-            <label>Email</label>
-            <input
+        <div className="form-row grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="form-group space-y-2">
+            <Label htmlFor="email">Email</Label>
+            <Input
+              id="email"
               type="email"
               value={profile.email || ''}
               onChange={(e) => setProfile({ ...profile, email: e.target.value })}
             />
           </div>
 
-          <div className="form-group">
-            <label>Location</label>
-            <input
+          <div className="form-group space-y-2">
+            <Label htmlFor="location">Location</Label>
+            <Input
+              id="location"
               type="text"
               value={profile.location || ''}
               onChange={(e) => setProfile({ ...profile, location: e.target.value })}
@@ -107,19 +115,21 @@ export default function ProfileEditor() {
           </div>
         </div>
 
-        <div className="form-group">
-          <label>Description</label>
-          <textarea
+        <div className="form-group space-y-2">
+          <Label htmlFor="description">Description</Label>
+          <Textarea
+            id="description"
             value={profile.description || ''}
             onChange={(e) => setProfile({ ...profile, description: e.target.value })}
-            rows="6"
+            rows={6}
           />
         </div>
 
-        <button type="submit" className="btn btn-primary" disabled={saving}>
+        <Button type="submit" disabled={saving} className="w-full md:w-auto">
           {saving ? 'Saving...' : 'Save Profile'}
-        </button>
+        </Button>
       </form>
     </div>
   )
 }
+

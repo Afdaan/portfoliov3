@@ -1,11 +1,12 @@
 import { useState } from 'react'
-import { Routes, Route, Link, useNavigate } from 'react-router-dom'
+import { Routes, Route, NavLink, useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabaseClient'
 import toast from 'react-hot-toast'
 import ProfileEditor from './ProfileEditor'
 import ExperienceManager from './ExperienceManager'
 import TechStackManager from './TechStackManager'
 import ProjectsManager from './ProjectsManager'
+import { Button } from '@/components/ui/button'
 import './AdminDashboard.css'
 
 export default function AdminDashboard() {
@@ -22,15 +23,15 @@ export default function AdminDashboard() {
       <nav className="admin-nav">
         <div className="admin-nav-header">
           <h2>Portfolio Admin</h2>
-          <button onClick={handleLogout} className="btn btn-secondary">
+          <Button onClick={handleLogout} variant="secondary" size="sm">
             Logout
-          </button>
+          </Button>
         </div>
         <div className="admin-nav-links">
-          <Link to="/admin" className="admin-nav-link">Profile</Link>
-          <Link to="/admin/experience" className="admin-nav-link">Experience & Education</Link>
-          <Link to="/admin/tech-stack" className="admin-nav-link">Tech Stack</Link>
-          <Link to="/admin/projects" className="admin-nav-link">Projects</Link>
+          <NavLink to="/admin" end className="admin-nav-link">Profile</NavLink>
+          <NavLink to="/admin/experience" className="admin-nav-link">Experience & Education</NavLink>
+          <NavLink to="/admin/tech-stack" className="admin-nav-link">Tech Stack</NavLink>
+          <NavLink to="/admin/projects" className="admin-nav-link">Projects</NavLink>
         </div>
       </nav>
 

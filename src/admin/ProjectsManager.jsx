@@ -3,8 +3,22 @@ import { supabase } from '../lib/supabaseClient'
 import toast from 'react-hot-toast'
 
 import ConfirmModal from '../components/ConfirmModal'
-
 import imageCompression from 'browser-image-compression'
+
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Textarea } from '@/components/ui/textarea'
+import { Select } from '@/components/ui/select'
+import { Label } from '@/components/ui/label'
+import { Checkbox } from '@/components/ui/checkbox'
+import { 
+  Table, 
+  TableBody, 
+  TableCell, 
+  TableHead, 
+  TableHeader, 
+  TableRow 
+} from '@/components/ui/table'
 
 export default function ProjectsManager() {
   const [projects, setProjects] = useState([])
@@ -118,7 +132,7 @@ export default function ProjectsManager() {
   }
 
   return (
-    <div className="admin-section">
+    <div className="admin-section space-y-6">
       <ConfirmModal 
         isOpen={!!deleteId}
         onClose={() => setDeleteId(null)}
@@ -127,52 +141,53 @@ export default function ProjectsManager() {
         message="Are you sure you want to delete this project?"
       />
 
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-        <h3>Projects</h3>
-        <button className="btn btn-primary" onClick={() => { setEditing(emptyProject); setShowForm(true) }}>
+      <div className="flex justify-between items-center mb-4">
+        <h3 className="text-xl font-bold tracking-tight text-foreground">Projects</h3>
+        <Button onClick={() => { setEditing(emptyProject); setShowForm(true) }}>
           Add New
-        </button>
+        </Button>
       </div>
 
       {showForm && (
-        <form onSubmit={(e) => { e.preventDefault(); saveProject(editing) }} className="admin-form" style={{ marginBottom: '2rem', padding: '1.5rem', background: 'var(--ctp-surface0)', borderRadius: 'var(--radius-md)' }}>
-          <div className="form-group">
-            <label>Title</label>
-            <input type="text" value={editing.title} onChange={(e) => setEditing({ ...editing, title: e.target.value })} required />
+        <form onSubmit={(e) => { e.preventDefault(); saveProject(editing) }} className="admin-form space-y-5 mb-8 p-6 bg-card border border-border rounded-lg">
+          <div className="form-group space-y-2">
+            <Label htmlFor="title">Title</Label>
+            <Input id="title" type="text" value={editing.title} onChange={(e) => setEditing({ ...editing, title: e.target.value })} required />
           </div>
           
-          <div className="form-group">
-            <label>Description</label>
-            <textarea value={editing.description} onChange={(e) => setEditing({ ...editing, description: e.target.value })} rows="4" required />
+          <div className="form-group space-y-2">
+            <Label htmlFor="description">Description</Label>
+            <Textarea id="description" value={editing.description} onChange={(e) => setEditing({ ...editing, description: e.target.value })} rows="4" required />
           </div>
 
-          <div className="form-row">
-            <div className="form-group">
-              <label>Status</label>
-              <select value={editing.status} onChange={(e) => setEditing({ ...editing, status: e.target.value })}>
+          <div className="form-row grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="form-group space-y-2">
+              <Label htmlFor="status">Status</Label>
+              <Select id="status" value={editing.status} onChange={(e) => setEditing({ ...editing, status: e.target.value })}>
                 {statuses.map(status => <option key={status} value={status}>{status}</option>)}
-              </select>
+              </Select>
             </div>
-            <div className="form-group">
-              <label>Featured</label>
-              <input type="checkbox" checked={editing.featured} onChange={(e) => setEditing({ ...editing, featured: e.target.checked })} style={{ width: 'auto', marginTop: '0.5rem' }} />
-            </div>
-          </div>
-
-          <div className="form-row">
-            <div className="form-group">
-              <label>Demo URL</label>
-              <input type="url" value={editing.demo_url || ''} onChange={(e) => setEditing({ ...editing, demo_url: e.target.value })} placeholder="https://..." />
-            </div>
-            <div className="form-group">
-              <label>GitHub URL</label>
-              <input type="url" value={editing.github_url || ''} onChange={(e) => setEditing({ ...editing, github_url: e.target.value })} placeholder="https://github.com/..." />
+            <div className="form-group flex items-center gap-2 pt-8">
+              <Checkbox id="featured" checked={editing.featured} onChange={(e) => setEditing({ ...editing, featured: e.target.checked })} />
+              <Label htmlFor="featured" className="cursor-pointer">Featured Project</Label>
             </div>
           </div>
 
-          <div className="form-group">
-            <label>Tech Stack (comma-separated)</label>
-            <input 
+          <div className="form-row grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="form-group space-y-2">
+              <Label htmlFor="demo_url">Demo URL</Label>
+              <Input id="demo_url" type="url" value={editing.demo_url || ''} onChange={(e) => setEditing({ ...editing, demo_url: e.target.value })} placeholder="https://..." />
+            </div>
+            <div className="form-group space-y-2">
+              <Label htmlFor="github_url">GitHub URL</Label>
+              <Input id="github_url" type="url" value={editing.github_url || ''} onChange={(e) => setEditing({ ...editing, github_url: e.target.value })} placeholder="https://github.com/..." />
+            </div>
+          </div>
+
+          <div className="form-group space-y-2">
+            <Label htmlFor="tech_stack">Tech Stack (comma-separated)</Label>
+            <Input 
+              id="tech_stack"
               type="text" 
               value={editing.tech_stack} 
               onChange={(e) => setEditing({ ...editing, tech_stack: e.target.value })} 
@@ -180,21 +195,29 @@ export default function ProjectsManager() {
             />
           </div>
 
-          <div className="form-group">
-            <label>Image URLs (comma-separated)</label>
-            <div style={{ marginBottom: '1rem' }}>
-              <label className="btn btn-secondary" style={{ cursor: uploading ? 'wait' : 'pointer', display: 'inline-block' }}>
-                {uploading ? 'Compressing & Uploading...' : 'Upload Image'}
-                <input 
-                  type="file" 
-                  accept="image/*" 
-                  onChange={handleImageUpload} 
-                  style={{ display: 'none' }} 
-                  disabled={uploading}
-                />
-              </label>
+          <div className="form-group space-y-2">
+            <Label>Image URLs (comma-separated)</Label>
+            <div className="mb-2">
+              <Button 
+                type="button" 
+                variant="secondary" 
+                size="sm" 
+                style={{ cursor: uploading ? 'wait' : 'pointer' }}
+                asChild
+              >
+                <label>
+                  {uploading ? 'Compressing & Uploading...' : 'Upload Image'}
+                  <input 
+                    type="file" 
+                    accept="image/*" 
+                    onChange={handleImageUpload} 
+                    style={{ display: 'none' }} 
+                    disabled={uploading}
+                  />
+                </label>
+              </Button>
             </div>
-            <input 
+            <Input 
               type="text" 
               value={editing.image_urls} 
               onChange={(e) => setEditing({ ...editing, image_urls: e.target.value })} 
@@ -211,7 +234,7 @@ export default function ProjectsManager() {
                     <img 
                       src={trimmedUrl} 
                       alt={`Preview ${index + 1}`} 
-                      style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '4px', border: '1px solid var(--ctp-surface1)' }}
+                      className="w-full h-full object-cover rounded border border-border"
                       onError={(e) => e.target.style.display = 'none'}
                     />
                   </div>
@@ -220,45 +243,47 @@ export default function ProjectsManager() {
             </div>
           </div>
 
-          <div style={{ display: 'flex', gap: '1rem' }}>
-            <button type="submit" className="btn btn-primary">Save</button>
-            <button type="button" className="btn btn-secondary" onClick={() => { setShowForm(false); setEditing(null) }}>Cancel</button>
+          <div className="flex gap-3 pt-2">
+            <Button type="submit">Save</Button>
+            <Button type="button" variant="secondary" onClick={() => { setShowForm(false); setEditing(null) }}>Cancel</Button>
           </div>
         </form>
       )}
 
-      <table className="admin-table">
-        <thead>
-          <tr>
-            <th>Title</th>
-            <th>Status</th>
-            <th>Featured</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>Title</TableHead>
+            <TableHead>Status</TableHead>
+            <TableHead>Featured</TableHead>
+            <TableHead className="text-right">Actions</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
           {projects.map(project => (
-            <tr key={project.id}>
-              <td>{project.title}</td>
-              <td>{project.status}</td>
-              <td>{project.featured ? '⭐' : '-'}</td>
-              <td className="admin-actions">
-                <button className="btn btn-secondary" onClick={() => { 
-                  setEditing({
-                    ...project,
-                    tech_stack: Array.isArray(project.tech_stack) ? project.tech_stack.join(', ') : project.tech_stack,
-                    image_urls: Array.isArray(project.image_urls) ? project.image_urls.join(', ') : project.image_urls,
-                  }); 
-                  setShowForm(true);
-                  // Small timeout to allow form to render
-                  setTimeout(() => document.querySelector('.admin-form')?.scrollIntoView({ behavior: 'smooth' }), 100);
-                }}>Edit</button>
-                <button className="btn btn-secondary" onClick={() => setDeleteId(project.id)}>Delete</button>
-              </td>
-            </tr>
+            <TableRow key={project.id}>
+              <TableCell className="font-medium">{project.title}</TableCell>
+              <TableCell>{project.status}</TableCell>
+              <TableCell>{project.featured ? '⭐' : '-'}</TableCell>
+              <TableCell className="text-right">
+                <div className="flex justify-end gap-2">
+                  <Button variant="outline" size="sm" onClick={() => { 
+                    setEditing({
+                      ...project,
+                      tech_stack: Array.isArray(project.tech_stack) ? project.tech_stack.join(', ') : project.tech_stack,
+                      image_urls: Array.isArray(project.image_urls) ? project.image_urls.join(', ') : project.image_urls,
+                    }); 
+                    setShowForm(true);
+                    // Small timeout to allow form to render
+                    setTimeout(() => document.querySelector('.admin-form')?.scrollIntoView({ behavior: 'smooth' }), 100);
+                  }}>Edit</Button>
+                  <Button variant="destructive" size="sm" onClick={() => setDeleteId(project.id)}>Delete</Button>
+                </div>
+              </TableCell>
+            </TableRow>
           ))}
-        </tbody>
-      </table>
+        </TableBody>
+      </Table>
     </div>
   )
 }

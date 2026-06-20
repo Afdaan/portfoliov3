@@ -4,6 +4,19 @@ import toast from 'react-hot-toast'
 
 import ConfirmModal from '../components/ConfirmModal'
 
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Textarea } from '@/components/ui/textarea'
+import { Label } from '@/components/ui/label'
+import { 
+  Table, 
+  TableBody, 
+  TableCell, 
+  TableHead, 
+  TableHeader, 
+  TableRow 
+} from '@/components/ui/table'
+
 export default function ExperienceManager() {
   const [workExperiences, setWorkExperiences] = useState([])
   const [education, setEducation] = useState([])
@@ -142,172 +155,178 @@ export default function ExperienceManager() {
         message="Are you sure you want to delete this education entry?"
       />
 
-      <div className="admin-section">
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-          <h3>Work Experience</h3>
-          <button className="btn btn-primary" onClick={() => { setEditingWork(emptyWork); setShowWorkForm(true) }}>
+      <div className="admin-section space-y-6">
+        <div className="flex justify-between items-center mb-4">
+          <h3 className="text-xl font-bold tracking-tight text-foreground">Work Experience</h3>
+          <Button onClick={() => { setEditingWork(emptyWork); setShowWorkForm(true) }}>
             Add New
-          </button>
+          </Button>
         </div>
 
         {showWorkForm && (
-          <form onSubmit={(e) => { e.preventDefault(); saveWork(editingWork) }} className="admin-form" style={{ marginBottom: '2rem', padding: '1.5rem', background: 'var(--ctp-surface0)', borderRadius: 'var(--radius-md)' }}>
-            <div className="form-row">
-              <div className="form-group">
-                <label>Company</label>
-                <input type="text" value={editingWork.company} onChange={(e) => setEditingWork({ ...editingWork, company: e.target.value })} required />
+          <form onSubmit={(e) => { e.preventDefault(); saveWork(editingWork) }} className="admin-form space-y-5 mb-8 p-6 bg-card border border-border rounded-lg">
+            <div className="form-row grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="form-group space-y-2">
+                <Label htmlFor="company">Company</Label>
+                <Input id="company" type="text" value={editingWork.company} onChange={(e) => setEditingWork({ ...editingWork, company: e.target.value })} required />
               </div>
-              <div className="form-group">
-                <label>Role</label>
-                <input type="text" value={editingWork.role} onChange={(e) => setEditingWork({ ...editingWork, role: e.target.value })} required />
-              </div>
-            </div>
-            <div className="form-row">
-              <div className="form-group">
-                <label>Start Date</label>
-                <input type="date" value={editingWork.start_date} onChange={(e) => setEditingWork({ ...editingWork, start_date: e.target.value })} required />
-              </div>
-              <div className="form-group">
-                <label>End Date (leave empty if current)</label>
-                <input type="date" value={editingWork.end_date || ''} onChange={(e) => setEditingWork({ ...editingWork, end_date: e.target.value })} />
+              <div className="form-group space-y-2">
+                <Label htmlFor="role">Role</Label>
+                <Input id="role" type="text" value={editingWork.role} onChange={(e) => setEditingWork({ ...editingWork, role: e.target.value })} required />
               </div>
             </div>
-            <div className="form-group">
-              <label>Description</label>
-              <textarea value={editingWork.description} onChange={(e) => setEditingWork({ ...editingWork, description: e.target.value })} rows="3" />
+            <div className="form-row grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="form-group space-y-2">
+                <Label htmlFor="work_start">Start Date</Label>
+                <Input id="work_start" type="date" value={editingWork.start_date} onChange={(e) => setEditingWork({ ...editingWork, start_date: e.target.value })} required />
+              </div>
+              <div className="form-group space-y-2">
+                <Label htmlFor="work_end">End Date (leave empty if current)</Label>
+                <Input id="work_end" type="date" value={editingWork.end_date || ''} onChange={(e) => setEditingWork({ ...editingWork, end_date: e.target.value })} />
+              </div>
             </div>
-            <div className="form-group">
-              <label>Responsibilities (one per line)</label>
-              <textarea 
+            <div className="form-group space-y-2">
+              <Label htmlFor="work_description">Description</Label>
+              <Textarea id="work_description" value={editingWork.description} onChange={(e) => setEditingWork({ ...editingWork, description: e.target.value })} rows="3" />
+            </div>
+            <div className="form-group space-y-2">
+              <Label htmlFor="work_responsibilities">Responsibilities (one per line)</Label>
+              <Textarea 
+                id="work_responsibilities"
                 value={editingWork.responsibilities || ''} 
                 onChange={(e) => setEditingWork({ ...editingWork, responsibilities: e.target.value })} 
                 rows="5"
                 placeholder="Deployed and configured Linux server environments&#10;Utilized KVM for creating and managing virtual machines&#10;Configured web hosting environments for client websites"
               />
             </div>
-            <div className="form-group">
-              <label>Technologies Used (comma-separated)</label>
-              <input 
+            <div className="form-group space-y-2">
+              <Label htmlFor="work_technologies">Technologies Used (comma-separated)</Label>
+              <Input 
+                id="work_technologies"
                 type="text" 
                 value={editingWork.technologies || ''} 
                 onChange={(e) => setEditingWork({ ...editingWork, technologies: e.target.value })} 
                 placeholder="Linux, KVM, cPanel, Email Hosting, Web Hosting"
               />
             </div>
-            <div style={{ display: 'flex', gap: '1rem' }}>
-              <button type="submit" className="btn btn-primary">Save</button>
-              <button type="button" className="btn btn-secondary" onClick={() => { setShowWorkForm(false); setEditingWork(null) }}>Cancel</button>
+            <div className="flex gap-3 pt-2">
+              <Button type="submit">Save</Button>
+              <Button type="button" variant="secondary" onClick={() => { setShowWorkForm(false); setEditingWork(null) }}>Cancel</Button>
             </div>
           </form>
         )}
 
-        <table className="admin-table">
-          <thead>
-            <tr>
-              <th>Company</th>
-              <th>Role</th>
-              <th>Period</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Company</TableHead>
+              <TableHead>Role</TableHead>
+              <TableHead>Period</TableHead>
+              <TableHead className="text-right">Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
             {workExperiences.map(work => (
-              <tr key={work.id}>
-                <td>{work.company}</td>
-                <td>{work.role}</td>
-                <td>{work.start_date} - {work.end_date || 'Present'}</td>
-                <td className="admin-actions">
-                  <button className="btn btn-secondary" onClick={() => { 
-                    setEditingWork({
-                      ...work,
-                      responsibilities: Array.isArray(work.responsibilities) ? work.responsibilities.join('\n') : work.responsibilities,
-                      technologies: Array.isArray(work.technologies) ? work.technologies.join(', ') : work.technologies
-                    }); 
-                    setShowWorkForm(true);
-                    // Small timeout to allow form to render
-                    setTimeout(() => document.querySelector('.admin-form')?.scrollIntoView({ behavior: 'smooth' }), 100);
-                  }}>Edit</button>
-                  <button className="btn btn-secondary" onClick={() => setDeleteWorkId(work.id)}>Delete</button>
-                </td>
-              </tr>
+              <TableRow key={work.id}>
+                <TableCell className="font-medium">{work.company}</TableCell>
+                <TableCell>{work.role}</TableCell>
+                <TableCell>{work.start_date} - {work.end_date || 'Present'}</TableCell>
+                <TableCell className="text-right">
+                  <div className="flex justify-end gap-2">
+                    <Button variant="outline" size="sm" onClick={() => { 
+                      setEditingWork({
+                        ...work,
+                        responsibilities: Array.isArray(work.responsibilities) ? work.responsibilities.join('\n') : work.responsibilities,
+                        technologies: Array.isArray(work.technologies) ? work.technologies.join(', ') : work.technologies
+                      }); 
+                      setShowWorkForm(true);
+                      // Small timeout to allow form to render
+                      setTimeout(() => document.querySelector('.admin-form')?.scrollIntoView({ behavior: 'smooth' }), 100);
+                    }}>Edit</Button>
+                    <Button variant="destructive" size="sm" onClick={() => setDeleteWorkId(work.id)}>Delete</Button>
+                  </div>
+                </TableCell>
+              </TableRow>
             ))}
-          </tbody>
-        </table>
+          </TableBody>
+        </Table>
       </div>
 
-      <div className="admin-section">
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-          <h3>Education</h3>
-          <button className="btn btn-primary" onClick={() => { setEditingEdu(emptyEdu); setShowEduForm(true) }}>
+      <div className="admin-section space-y-6">
+        <div className="flex justify-between items-center mb-4">
+          <h3 className="text-xl font-bold tracking-tight text-foreground">Education</h3>
+          <Button onClick={() => { setEditingEdu(emptyEdu); setShowEduForm(true) }}>
             Add New
-          </button>
+          </Button>
         </div>
 
         {showEduForm && (
-          <form onSubmit={(e) => { e.preventDefault(); saveEducation(editingEdu) }} className="admin-form edu-form" style={{ marginBottom: '2rem', padding: '1.5rem', background: 'var(--ctp-surface0)', borderRadius: 'var(--radius-md)' }}>
-            <div className="form-row">
-              <div className="form-group">
-                <label>Institution</label>
-                <input type="text" value={editingEdu.institution} onChange={(e) => setEditingEdu({ ...editingEdu, institution: e.target.value })} required />
+          <form onSubmit={(e) => { e.preventDefault(); saveEducation(editingEdu) }} className="admin-form edu-form space-y-5 mb-8 p-6 bg-card border border-border rounded-lg">
+            <div className="form-row grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="form-group space-y-2">
+                <Label htmlFor="institution">Institution</Label>
+                <Input id="institution" type="text" value={editingEdu.institution} onChange={(e) => setEditingEdu({ ...editingEdu, institution: e.target.value })} required />
               </div>
-              <div className="form-group">
-                <label>Degree</label>
-                <input type="text" value={editingEdu.degree} onChange={(e) => setEditingEdu({ ...editingEdu, degree: e.target.value })} required />
-              </div>
-            </div>
-            <div className="form-group">
-              <label>Field of Study</label>
-              <input type="text" value={editingEdu.field_of_study || ''} onChange={(e) => setEditingEdu({ ...editingEdu, field_of_study: e.target.value })} />
-            </div>
-            <div className="form-row">
-              <div className="form-group">
-                <label>Start Date</label>
-                <input type="date" value={editingEdu.start_date} onChange={(e) => setEditingEdu({ ...editingEdu, start_date: e.target.value })} required />
-              </div>
-              <div className="form-group">
-                <label>End Date</label>
-                <input type="date" value={editingEdu.end_date || ''} onChange={(e) => setEditingEdu({ ...editingEdu, end_date: e.target.value })} />
+              <div className="form-group space-y-2">
+                <Label htmlFor="degree">Degree</Label>
+                <Input id="degree" type="text" value={editingEdu.degree} onChange={(e) => setEditingEdu({ ...editingEdu, degree: e.target.value })} required />
               </div>
             </div>
-            <div className="form-group">
-              <label>Description</label>
-              <textarea value={editingEdu.description || ''} onChange={(e) => setEditingEdu({ ...editingEdu, description: e.target.value })} rows="4" />
+            <div className="form-group space-y-2">
+              <Label htmlFor="field_of_study">Field of Study</Label>
+              <Input id="field_of_study" type="text" value={editingEdu.field_of_study || ''} onChange={(e) => setEditingEdu({ ...editingEdu, field_of_study: e.target.value })} />
             </div>
-            <div style={{ display: 'flex', gap: '1rem' }}>
-              <button type="submit" className="btn btn-primary">Save</button>
-              <button type="button" className="btn btn-secondary" onClick={() => { setShowEduForm(false); setEditingEdu(null) }}>Cancel</button>
+            <div className="form-row grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="form-group space-y-2">
+                <Label htmlFor="edu_start">Start Date</Label>
+                <Input id="edu_start" type="date" value={editingEdu.start_date} onChange={(e) => setEditingEdu({ ...editingEdu, start_date: e.target.value })} required />
+              </div>
+              <div className="form-group space-y-2">
+                <Label htmlFor="edu_end">End Date</Label>
+                <Input id="edu_end" type="date" value={editingEdu.end_date || ''} onChange={(e) => setEditingEdu({ ...editingEdu, end_date: e.target.value })} />
+              </div>
+            </div>
+            <div className="form-group space-y-2">
+              <Label htmlFor="edu_description">Description</Label>
+              <Textarea id="edu_description" value={editingEdu.description || ''} onChange={(e) => setEditingEdu({ ...editingEdu, description: e.target.value })} rows="4" />
+            </div>
+            <div className="flex gap-3 pt-2">
+              <Button type="submit">Save</Button>
+              <Button type="button" variant="secondary" onClick={() => { setShowEduForm(false); setEditingEdu(null) }}>Cancel</Button>
             </div>
           </form>
         )}
 
-        <table className="admin-table">
-          <thead>
-            <tr>
-              <th>Institution</th>
-              <th>Degree</th>
-              <th>Period</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Institution</TableHead>
+              <TableHead>Degree</TableHead>
+              <TableHead>Period</TableHead>
+              <TableHead className="text-right">Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
             {education.map(edu => (
-              <tr key={edu.id}>
-                <td>{edu.institution}</td>
-                <td>{edu.degree}</td>
-                <td>{edu.start_date} - {edu.end_date || 'Present'}</td>
-                <td className="admin-actions">
-                  <button className="btn btn-secondary" onClick={() => { 
-                    setEditingEdu(edu); 
-                    setShowEduForm(true);
-                    // Small timeout to allow form to render
-                    setTimeout(() => document.querySelector('.edu-form')?.scrollIntoView({ behavior: 'smooth' }), 100);
-                  }}>Edit</button>
-                  <button className="btn btn-secondary" onClick={() => setDeleteEduId(edu.id)}>Delete</button>
-                </td>
-              </tr>
+              <TableRow key={edu.id}>
+                <TableCell className="font-medium">{edu.institution}</TableCell>
+                <TableCell>{edu.degree}</TableCell>
+                <TableCell>{edu.start_date} - {edu.end_date || 'Present'}</TableCell>
+                <TableCell className="text-right">
+                  <div className="flex justify-end gap-2">
+                    <Button variant="outline" size="sm" onClick={() => { 
+                      setEditingEdu(edu); 
+                      setShowEduForm(true);
+                      // Small timeout to allow form to render
+                      setTimeout(() => document.querySelector('.edu-form')?.scrollIntoView({ behavior: 'smooth' }), 100);
+                    }}>Edit</Button>
+                    <Button variant="destructive" size="sm" onClick={() => setDeleteEduId(edu.id)}>Delete</Button>
+                  </div>
+                </TableCell>
+              </TableRow>
             ))}
-          </tbody>
-        </table>
+          </TableBody>
+        </Table>
       </div>
     </div>
   )
